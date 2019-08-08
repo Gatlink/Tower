@@ -10,13 +10,17 @@ Collider.new = function( x, y, w, h )
     local new = {}
     new.w = w or 0
     new.h = h or 0
-    
+
     setmetatable( new, Collider )
     new:setPosition( x or 0, y or 0 )
     return new
 end
 
 Collider.collide = function( self, with )
+    if self.left >= with.right or self.right <= with.left or self.top >= with.bottom or self.bottom <= with.top then
+        return nil
+    end
+
     local col = { x = 0, y = 0, value = math.huge }
     local wasFound = false
 
