@@ -53,61 +53,71 @@ Collider.setPosition = function( self, x, y )
     self.bottom = y + self.h / 2
 end
 
--- ENTITIES
-local Entity = {}
-Entity.__index = Entity
-Entity.all = {}
-Entity.new = function( x, y, radius, color )
+-- MOBILE
+local Mobile = {}
+Mobile.__index = Mobile
+Mobile.all = {}
+Mobile.new = function( x, y, w, h, color )
     local new = {}
     new.x = x or 0
     new.y = y or 0
-    new.radius = radius or 25
+    new.w = w or 50
+    new.h = h or 50
     new.color = color or { 1, 0, 0 }
 
-    new.speed = 200
+    new.xSpeed = 200
     new.xf = 0.95
     new.dx = 0
+
+    new.gravity = 500
+    new.yf = 0.98
     new.dy = 0
 
-    new.collider = Collider.new( new.x, new.y, new.radius * 2, new.radius * 2 )
+    new.collider = Collider.new( new.x, new.y, new.w, new.h )
 
-    setmetatable( new, Entity )
-    new.id = #Entity.all + 1
-    Entity.all[ new.id ] = new
+    setmetatable( new, Mobile )
+    new.id = #Mobile.all + 1
+    Mobile.all[ new.id ] = new
     return new
 end
 
-Entity.draw = function( self )
+Mobile.draw = function( self )
     love.graphics.setColor( self.color )
-    love.graphics.rectangle( 'fill', self.x - self.radius, self.y - self.radius, self.radius * 2, self.radius * 2 )
+    love.graphics.rectangle( 'fill', self.x - self.w / 2, self.y - self.h / 2, self.w, self.h )
 end
 
-Entity.update = function( self, dt )
-    self:move( self.x + self.dx * self.speed * dt, self.y )
+Mobile.update = function( self, dt )
+    self.dy = self.yf + self.dy * ( 1 - self.yf )
+    self:move( self.x + self.dx * self.xSpeed * dt, self.y + self.dy * self.gravity * dt )
 end
 
-Entity.move = function( self, x, y )
+Mobile.move = function( self, x, y )
     self:setPosition( x, y )
 
-    for i, e in ipairs( Entity.all ) do
-        if i ~= self.id then
-            local collision = self.collider:collide( e.collider )
-            if collision ~= nil then
-                self:setPosition( x + collision.x * collision.value, y + collision.y * collision.value )
+    local hasCollision
+    repeat
+        hasCollision = false
+        for i, m in ipairs( Mobile.all ) do
+            if i ~= self.id then
+                local collision = self.collider:collide( m.collider )
+                if collision ~= nil then
+                    self:setPosition( x + collision.x * collision.value, y + collision.y * collision.value )
+                    hasCollision = true
+                end
             end
         end
-    end
+    until not hasCollision
 end
 
-Entity.setPosition = function( self, x, y )
+Mobile.setPosition = function( self, x, y )
     self.x = x
     self.y = y
     self.collider:setPosition( x, y )
 end
 
 -- PLAYER
-local Player = Entity.new( 400, 300 )
-setmetatable(Player, Entity )
+local Player = Mobile.new( 400, 300 )
+setmetatable(Player, Mobile )
 
 Player.update = function( self, dt )
     local dx = 0;
@@ -115,16 +125,17 @@ Player.update = function( self, dt )
     if input.right then dx = dx + 1 end
 
     self.dx = dx * self.xf + self.dx * ( 1 - self.xf )
-    Entity.update( self, dt )
+    Mobile.update( self, dt )
 end
 
 -- CALLBACKS
 function love.load()
-    Entity.new( 500, 295, 30, { 0, 1, 0 } )
+    Mobile.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } ).gravity = 0
+    Mobile.new( 500, 295, 60, 60, { 0, 1, 0 } )
 end
 
 function love.draw()
-    for _, e in ipairs( Entity.all) do
+    for _, e in ipairs( Mobile.all) do
         e:draw()
     end
 end
@@ -139,7 +150,7 @@ function love.keyreleased( _, code )
 end
 
 function love.update( dt )
-    for _, e in ipairs( Entity.all) do
+    for _, e in ipairs( Mobile.all) do
         e:update( dt )
     end
 end
