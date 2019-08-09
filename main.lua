@@ -1,6 +1,7 @@
 local input = {
-    left = false,
-    right = false
+    left  = false,
+    right = false,
+    up    = false
 }
 
 -- AABB
@@ -177,12 +178,13 @@ function love.draw()
 end
 
 function love.keypressed( _, code )
-    input.left, input.right = code == "a", code == "d"
+    input.left, input.right, input.up = code == "a", code == "d", code == "w"
 end
 
 function love.keyreleased( _, code )
     if code == "a" then input.left  = false end
     if code == "d" then input.right = false end
+    if code == "w" then input.up    = false end
 end
 
 function love.update( dt )
