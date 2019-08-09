@@ -53,17 +53,37 @@ Collider.setPosition = function( self, x, y )
     self.bottom = y + self.h / 2
 end
 
--- MOBILE
-local Mobile = {}
-Mobile.__index = Mobile
-Mobile.all = {}
-Mobile.new = function( x, y, w, h, color )
+-- ENTITY
+local Entity = {}
+Entity.__index = Entity
+Entity.all = {}
+Entity.new = function( x, y, w, h, color )
     local new = {}
     new.x = x or 0
     new.y = y or 0
     new.w = w or 50
     new.h = h or 50
     new.color = color or { 1, 0, 0 }
+
+    new.collider = Collider.new( new.x, new.y, new.w, new.h )
+
+    setmetatable( new, Entity )
+    new.id = #Entity.all + 1
+    Entity.all[ new.id ] = new
+    return new
+end
+
+Entity.draw = function( self )
+    love.graphics.setColor( self.color )
+    love.graphics.rectangle( 'fill', self.x - self.w / 2, self.y - self.h / 2, self.w, self.h )
+end
+
+-- MOBILE
+local Mobile = {}
+Mobile.__index = Mobile
+Mobile.all = {}
+Mobile.new = function( x, y, w, h, color )
+    local new = Entity.new( x, y, w, h, color )
 
     new.xSpeed = 200
     new.xf = 0.95
@@ -76,8 +96,7 @@ Mobile.new = function( x, y, w, h, color )
     new.collider = Collider.new( new.x, new.y, new.w, new.h )
 
     setmetatable( new, Mobile )
-    new.id = #Mobile.all + 1
-    Mobile.all[ new.id ] = new
+    Mobile.all[ #Mobile.all + 1 ] = new
     return new
 end
 
@@ -97,9 +116,9 @@ Mobile.move = function( self, x, y )
     local hasCollision
     repeat
         hasCollision = false
-        for i, m in ipairs( Mobile.all ) do
+        for i, e in ipairs( Entity.all ) do
             if i ~= self.id then
-                local collision = self.collider:collide( m.collider )
+                local collision = self.collider:collide( e.collider )
                 if collision ~= nil then
                     self:setPosition( x + collision.x * collision.value, y + collision.y * collision.value )
                     hasCollision = true
@@ -130,12 +149,12 @@ end
 
 -- CALLBACKS
 function love.load()
-    Mobile.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } ).gravity = 0
+    Entity.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } )
     Mobile.new( 500, 295, 60, 60, { 0, 1, 0 } )
 end
 
 function love.draw()
-    for _, e in ipairs( Mobile.all) do
+    for _, e in ipairs( Entity.all) do
         e:draw()
     end
 end
