@@ -81,6 +81,7 @@ end
 -- MOBILE
 local Mobile = {}
 Mobile.__index = Mobile
+setmetatable( Mobile, Entity )
 Mobile.all = {}
 Mobile.new = function( x, y, w, h, color )
     local new = Entity.new( x, y, w, h, color )
@@ -98,11 +99,6 @@ Mobile.new = function( x, y, w, h, color )
     setmetatable( new, Mobile )
     Mobile.all[ #Mobile.all + 1 ] = new
     return new
-end
-
-Mobile.draw = function( self )
-    love.graphics.setColor( self.color )
-    love.graphics.rectangle( 'fill', self.x - self.w / 2, self.y - self.h / 2, self.w, self.h )
 end
 
 Mobile.update = function( self, dt )
@@ -135,8 +131,8 @@ Mobile.setPosition = function( self, x, y )
 end
 
 -- PLAYER
-local Player = Mobile.new( 400, 300 )
-setmetatable(Player, Mobile )
+local Player = Mobile.new( 100, 300 )
+setmetatable( Player, Mobile )
 
 Player.update = function( self, dt )
     local dx = 0;
@@ -145,12 +141,33 @@ Player.update = function( self, dt )
 
     self.dx = dx * self.xf + self.dx * ( 1 - self.xf )
     Mobile.update( self, dt )
+
+    local windowWidth = love.window.getMode()
+    if self.x > windowWidth then
+        self:setPosition( 0, self.y )
+    elseif self.x < 0 then
+        self:setPosition( windowWidth, self.y )
+    end
+end
+
+Player.draw = function( self )
+    Mobile.draw( self )
+
+    local windowWidth = love.window.getMode()
+    local radius = self.w / 2
+    if self.x + radius > windowWidth then
+        love.graphics.setColor( self.color )
+        love.graphics.rectangle( 'fill', 0, self.y - radius, self.x + radius - windowWidth, self.h )
+    elseif self.x - radius < 0 then
+        love.graphics.setColor( self.color )
+        love.graphics.rectangle( 'fill', windowWidth + self.x - radius, self.y - radius, radius, self.h )
+    end
 end
 
 -- CALLBACKS
 function love.load()
     Entity.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } )
-    Mobile.new( 500, 295, 60, 60, { 0, 1, 0 } )
+    Entity.new( 370, 200, 60, 400, { 0.3, 0.3, 0.3 } )
 end
 
 function love.draw()
