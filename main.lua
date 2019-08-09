@@ -120,7 +120,7 @@ Mobile.move = function( self, x, y )
             if i ~= self.id then
                 local collision = self.collider:collide( e.collider )
                 if collision ~= nil then
-                    self:setPosition( x + collision.x * collision.value, y + collision.y * collision.value )
+                    self:setPosition( self.x + collision.x * collision.value, self.y + collision.y * collision.value )
                     hasCollision = true
                 end
             end
