@@ -18,30 +18,25 @@ Collider.new = function( x, y, w, h )
 end
 
 Collider.collide = function( self, with )
-    if self.left >= with.right or self.right <= with.left or self.top >= with.bottom or self.bottom <= with.top then
-        return nil
-    end
+    local col = { x = 0, y = 0, depth = math.huge }
+    local setMin = function( depth, x, y )
+        if depth <= 0 then return false end
 
-    local col = { x = 0, y = 0, value = math.huge }
-    local wasFound = false
-
-    local setMin = function( min, x, y )
-        if min > 0 and min < col.value then
+        if depth < col.depth then
             col.x = x
             col.y = y
-            col.value = min
-            return true
+            col.depth = depth
         end
-
-        return false
+        
+        return true
     end
 
-    wasFound = setMin( with.right - self.left, 1, 0 )  or wasFound
-    wasFound = setMin( self.right - with.left, -1, 0 ) or wasFound
-    wasFound = setMin( with.bottom - self.top, 0, 1 )  or wasFound
-    wasFound = setMin( self.bottom - with.top, 0, -1 ) or wasFound
+    if not setMin( with.right - self.left,  1,  0 ) then return nil end
+    if not setMin( self.right - with.left, -1,  0 ) then return nil end
+    if not setMin( with.bottom - self.top,  0,  1 ) then return nil end
+    if not setMin( self.bottom - with.top,  0, -1 ) then return nil end
 
-    return wasFound and col or nil
+    return col
 end
 
 Collider.setPosition = function( self, x, y )
@@ -117,7 +112,7 @@ Mobile.move = function( self, x, y )
             if i ~= self.id then
                 local collision = self.collider:collide( e.collider )
                 if collision ~= nil then
-                    self:setPosition( self.x + collision.x * collision.value, self.y + collision.y * collision.value )
+                    self:setPosition( self.x + collision.x * collision.depth, self.y + collision.y * collision.depth )
                     hasCollision = true
                 end
             end
@@ -132,7 +127,7 @@ Mobile.setPosition = function( self, x, y )
 end
 
 -- PLAYER
-local Player = Mobile.new( 100, 300 )
+local Player = Mobile.new( 100, 100 )
 setmetatable( Player, Mobile )
 
 Player.update = function( self, dt )
