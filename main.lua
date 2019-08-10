@@ -1,6 +1,7 @@
 require( 'Tools.Tween' )
 require( 'Tools.Collider' )
 require( 'Tools.Input' )
+require( 'Tools.StateMachine' )
 
 require( 'Entities.Entity' )
 require( 'Entities.Mobile' )
