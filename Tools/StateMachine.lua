@@ -30,7 +30,22 @@ StateMachine.draw = function( self )
     end
 end
 
-StateMachine.addState = function( self, stateId )
+StateMachine.setState = function( self, stateId )
+    if not self.states[ stateId ] then return end
+    
+    local state = self:getCurrentState()
+    if state and state.exit then
+        state:exit()
+    end
+    
+    self.current = stateId
+    state = self:getCurrentState()
+    if state.enter then
+        state:enter()
+    end
+end
+
+local addState = function( self, stateId )
     if stateId then
         self.states[ stateId  ] = {
             sm = self
@@ -39,17 +54,12 @@ StateMachine.addState = function( self, stateId )
     end
 end
 
-StateMachine.setState = function( self, stateId )
-    if not self.states[ stateId ] then return end
+-- STATE
+State = {}
+State.__index = State
 
-    local state = self:getCurrentState()
-    if state and state.exit then
-        state:exit()
-    end
-
-    self.current = stateId
-    state = self:getCurrentState()
-    if state.enter then
-        state:enter()
-    end
+State.new = function( sm, id )
+    local new = addState( sm, id )
+    setmetatable( new, State )
+    return new
 end

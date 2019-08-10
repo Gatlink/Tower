@@ -1,8 +1,9 @@
-Player = Mobile.new( 100, 100 )
+Player = StateMachine.new()
 
 -- NORMAL STATE
-local normalUpdate = function( self, dt )
-    self = self.sm.parent
+local StateNormal = State.new( Player, 'normal' )
+StateNormal.update = function( self, dt )
+    self = self.sm.mob
     local dx = 0;
     if Input.left  then dx = dx - 1 end
     if Input.right then dx = dx + 1 end
@@ -12,18 +13,18 @@ local normalUpdate = function( self, dt )
 
     local windowWidth = love.window.getMode()
     if self.x > windowWidth then
-        Player:setPosition( 0, self.y )
-    elseif Player.x < 0 then
-        Player:setPosition( windowWidth, self.y )
+        self:setPosition( 0, self.y )
+    elseif self.x < 0 then
+        self:setPosition( windowWidth, self.y )
     end
 end
 
-local normalDraw = function( self )
-    self = self.sm.parent
-    Mobile.draw( Player )
+StateNormal.draw = function( self )
+    self = self.sm.mob
+    Mobile.draw( self )
 
     local windowWidth = love.window.getMode()
-    local radius = Player.w / 2
+    local radius = self.w / 2
     if self.x + radius > windowWidth then
         love.graphics.setColor( self.color )
         love.graphics.rectangle( 'fill', self.x - radius - windowWidth, self.y - radius, self.w, self.h )
@@ -33,23 +34,14 @@ local normalDraw = function( self )
     end
 end
 
+-- JUMP STATE
+local StateJump = State.new( Player, 'jump' )
+StateJump.update = function( self, dt )
+    self = self.sm.mob
+end
+
 -- METHODS
 Player.load = function( self )
-    local sm = StateMachine.new()
-    sm.parent = self
-    Player.stateMachine = sm
-
-    local normalState = sm:addState( 'normal' )
-    normalState.update = normalUpdate
-    normalState.draw   = normalDraw
-
-    Player.stateMachine:setState( 'normal' )
-end
-
-Player.update = function( Player, dt )
-    Player.stateMachine:update( dt )
-end
-
-Player.draw = function( Player )
-    Player.stateMachine:draw()
+    self.mob = Mobile.new( 100, 100 )
+    self:setState( 'normal' )
 end

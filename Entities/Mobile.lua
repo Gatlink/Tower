@@ -1,7 +1,6 @@
 Mobile = {}
 Mobile.__index = Mobile
 setmetatable( Mobile, Entity )
-Mobile.all = {}
 Mobile.new = function( x, y, w, h, color )
     local new = Entity.new( x, y, w, h, color )
 
@@ -16,7 +15,6 @@ Mobile.new = function( x, y, w, h, color )
     new.collider = Collider.new( new.x, new.y, new.w, new.h )
 
     setmetatable( new, Mobile )
-    Mobile.all[ #Mobile.all + 1 ] = new
     return new
 end
 

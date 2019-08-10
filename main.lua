@@ -7,16 +7,24 @@ require( 'Entities.Entity' )
 require( 'Entities.Mobile' )
 require( 'Entities.Player' )
 
+local level = {}
+
 function love.load()
     Player:load()
-    Entity.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } )
-    Entity.new( 370, 200, 60, 400, { 0.3, 0.3, 0.3 } )
+    level[ #level + 1 ] = Entity.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } )
+    level[ #level + 1 ] = Entity.new( 370, 200, 60, 400, { 0.3, 0.3, 0.3 } )
+end
+
+function love.update( dt )
+    Player:update( dt )
 end
 
 function love.draw()
-    for _, e in ipairs( Entity.all) do
+    for _, e in ipairs( level ) do
         e:draw()
     end
+
+    Player:draw()
 end
 
 function love.keypressed( _, code )
@@ -27,10 +35,4 @@ function love.keyreleased( _, code )
     if code == "a" then Input.left  = false end
     if code == "d" then Input.right = false end
     if code == "w" then Input.up    = false end
-end
-
-function love.update( dt )
-    for _, e in ipairs( Mobile.all) do
-        e:update( dt )
-    end
 end
