@@ -30,18 +30,18 @@ StateMachine.draw = function( self )
     end
 end
 
-StateMachine.setState = function( self, stateId )
-    if not self.states[ stateId ] then return end
-    
+StateMachine.setState = function( self, stateId, data )
+    if not self.states[ stateId ] then return nil end
+
     local state = self:getCurrentState()
     if state and state.exit then
         state:exit()
     end
-    
+
     self.current = stateId
     state = self:getCurrentState()
     if state.enter then
-        state:enter()
+        state:enter( data )
     end
 end
 

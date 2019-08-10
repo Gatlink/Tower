@@ -17,6 +17,7 @@ end
 
 function love.update( dt )
     Player:update( dt )
+    Input:update( dt ) -- needs to be last
 end
 
 function love.draw()
@@ -27,12 +28,5 @@ function love.draw()
     Player:draw()
 end
 
-function love.keypressed( _, code )
-    Input.left, Input.right, Input.up = code == "a", code == "d", code == "w"
-end
-
-function love.keyreleased( _, code )
-    if code == "a" then Input.left  = false end
-    if code == "d" then Input.right = false end
-    if code == "w" then Input.up    = false end
-end
+function love.keypressed( _, code )  Input:keypressed( code ) end
+function love.keyreleased( _, code ) Input:keyreleased( code ) end

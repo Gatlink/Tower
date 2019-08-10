@@ -1,7 +1,7 @@
 -- Easing methods taken from Peidro Meideros: https://www.patreon.com/posts/animation-easing-8030922
 Tween = {}
-Tween.lerp   = function( min, max, t, easing )
-    return min + ( max - min ) * math.max( 0, math.min( 1, easing and Tween[ easing ] and Tween[ easing ]( t ) or t ) )
+Tween.lerp   = function( from, to, t, easing )
+    return from + ( to - from ) * math.max( 0, math.min( 1, easing and Tween[ easing ] and Tween[ easing ]( t ) or t ) )
 end
 
 Tween.cubeIn = function( t ) return t * t * t end
@@ -15,21 +15,21 @@ Tween.cubeInOut = function( t )
     end
 end
 
-Tween.easeCubeOut = function( t )
+Tween.cubeOut = function( t )
     t = t - 1
     return 1 + t * t * t
 end
 
-Tween.easeBackIn = function( t )
+Tween.backIn = function( t )
     return t * t * ( 2.70158 * t - 1.70158 )
 end
 
-Tween.easeBackOut = function( t )
+Tween.backOut = function( t )
     t = t - 1
     return ( 1 - t * t * ( -2.70158 * t - 1.70158 ) )
 end
 
-Tween.easeBackInOut = function( t )
+Tween.backInOut = function( t )
     t = t * 2
 
     if t < 1 then
@@ -40,15 +40,15 @@ Tween.easeBackInOut = function( t )
     end
 end
 
-Tween.easeElasticIn = function( t )
+Tween.elasticIn = function( t )
     return math.sin( 13 * ( math.pi / 2 ) * t ) * math.pow( 2, 10 * ( t - 1 ) )
 end
 
-Tween.easeElasticOut = function( t )
+Tween.elasticOut = function( t )
     return math.sin( -13 * ( math.pi / 2 ) * ( t + 1 ) ) * math.pow( 2, -10 * t ) + 1
 end
 
-Tween.easeElasticInOut = function( t )
+Tween.elasticInOut = function( t )
     if t < 0.5 then
         return 0.5 * ( math.sin( 13 * ( math.pi / 2 ) * ( 2 * t ) ) * math.pow( 2, 10 * ( ( 2 * t ) - 1 ) ) )
     else
