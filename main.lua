@@ -8,9 +8,9 @@ require( 'Entities.Mobile' )
 require( 'Entities.Player' )
 
 function love.load()
+    Player:load()
     Entity.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } )
     Entity.new( 370, 200, 60, 400, { 0.3, 0.3, 0.3 } )
-    print( Tween.lerp( 0, 1, 0.3, "cubeInOut" ) )
 end
 
 function love.draw()

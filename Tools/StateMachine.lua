@@ -32,7 +32,9 @@ end
 
 StateMachine.addState = function( self, stateId )
     if stateId then
-        self.states[ stateId  ] = {}
+        self.states[ stateId  ] = {
+            sm = self
+        }
         return self.states[ stateId ]
     end
 end
