@@ -11,8 +11,10 @@ StateNormal.update = function( self, dt )
     mob.dx = dx * mob.xf + mob.dx * ( 1 - mob.xf )
     Mobile.update( mob, dt )
 
-    if Input:isPressed( Input.keys.UP ) then
-        self.sm:initJump()
+    local wall = self.sm:collideWithWall()
+    if Input:isPressed( Input.keys.UP ) and wall then
+        print( 'start climbing')
+        self.sm:setState( "climb", wall.h - mob.h / 2 )
     end
 end
 
@@ -47,20 +49,49 @@ StateJump.update = function( self, dt )
     local y = Tween.lerp( self.from.y, self.to.y, t, 'cubeOut' )
     y = y - Tween.lerp( 0, self.height, t <= 0.5 and t * 2 or 2 * ( 1 - t ), t <= 0.5 and 'cubeOut' or 'cubeIn' )
 
-    
+
     mob:move( x, y )
 
-    -- collisions
-    local collided = false
-    for _, col in ipairs( mob.collisions ) do
-        if col.x ~= 0 then
-            collided = true
-            break
-        end
-    end
-
-    if t >= 1 or collided then
+    if t >= 1 or self.sm:collideWithWall() then
         self.sm:setState( 'normal' )
+    end
+end
+
+-- CLIMB STATE
+local StateClimb = State.new( Player, "climb" )
+StateClimb.speed       = 100
+StateClimb.bitLength   = 0
+StateClimb.from        = 0
+StateClimb.elapsedTime = 0
+StateClimb.duration    = 0
+StateClimb.stop        = 0
+
+StateClimb.enter = function( self, height )
+    self.bitLength   = height / 4
+    self.from        = self.sm.mob.y
+    self.elapsedTime = 0
+    self.duration    = self.bitLength / self.speed
+    self.stop        = self.from - self.height
+    print( 'climb enter' )
+end
+
+StateClimb.update = function( self, dt )
+    self.elapsedTime = self.elapsedTime + dt
+
+    local t = self.elapsedTime / self.duration
+    local y = Tween.lerp( self.from, self.from - self.bitLength, t, "cubeOut" )
+
+    local mob = self.sm.mob
+    mob:move( mob.x, y )
+
+    if t == 1 then
+        if y == self.stop then
+            self.sm:setState( 'normal' )
+            print( 'climb leave' )
+        else
+            self.elapsedTime = 0
+            self.from = y
+        end
     end
 end
 
@@ -91,9 +122,13 @@ Player.draw = function( self )
     if mob.x + radius > windowWidth then
         love.graphics.setColor( mob.color )
         love.graphics.rectangle( 'fill', mob.x - radius - windowWidth, mob.y - radius, mob.w, mob.h )
+        love.graphics.setColor( 0, 0, 0 )
+        love.graphics.rectangle( 'fill', ( mob.dir == 1 and mob.x or mob.x - mob.w / 2 ) - windowWidth, mob.y - 2, mob.w / 2, 4 )
     elseif mob.x - radius < 0 then
         love.graphics.setColor( mob.color )
         love.graphics.rectangle( 'fill', mob.x - radius + windowWidth, mob.y - radius, mob.w, mob.h )
+        love.graphics.setColor( 0, 0, 0 )
+        love.graphics.rectangle( 'fill', ( mob.dir == 1 and mob.x or mob.x - mob.w / 2 ) + windowWidth, mob.y - 2, mob.w / 2, 4 )
     end
 end
 
@@ -105,4 +140,14 @@ Player.initJump = function( self )
         height = 100
     }
     self:setState( 'jump', data )
+end
+
+Player.collideWithWall = function( self )
+    for _, col in ipairs( self.mob.collisions ) do
+        if col.x ~= 0 then
+            return col.e
+        end
+    end
+
+    return nil
 end

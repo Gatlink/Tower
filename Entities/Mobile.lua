@@ -23,7 +23,7 @@ end
 
 Mobile.update = function( self, dt )
     for i = 0, #self.collisions do self.collisions[ i ] = nil end
-    
+
     if self.dx ~= 0 then
         self.dir = self.dx > 0 and 1 or -1
     end
@@ -51,6 +51,7 @@ Mobile.move = function( self, x, y )
                 if collision ~= nil then
                     self:setPosition( self.x + collision.x * collision.depth, self.y + collision.y * collision.depth )
                     hasCollision = true
+                    collision.with = e
                     self.collisions[ #self.collisions + 1 ] = collision
 
                     if collision.x ~= 0 then self.dx = 0 end
