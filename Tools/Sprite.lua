@@ -59,7 +59,7 @@ Sprite.draw = function( self, x, y )
 end
 
 Sprite.play = function( self, name )
-    if self.sheet.anims[ name ] or self.sheet.anims[ name ] == self.anim then return end
+    if self.sheet.anims[ name ] == nil or self.sheet.anims[ name ] == self.anim then return end
 
     self.anim  = self.sheet.anims[ name ]
     self.frame = 0

@@ -10,12 +10,18 @@ StateNormal.update = function( self, dt )
 
     mob.dx = dx * mob.xf + mob.dx * ( 1 - mob.xf )
     Mobile.update( mob, dt )
-
-    local wall = self.sm:collideWithWall()
-    if Input:isPressed( Input.keys.UP ) and wall then
-        print( 'start climbing')
-        self.sm:setState( "climb", wall.h - mob.h / 2 )
+    
+    if dx ~= 0 then
+        self.sm.spr:play( 'walk' )
+    else
+        self.sm.spr:play( 'idle' )
     end
+
+    -- local wall = self.sm:collideWithWall()
+    -- if Input:isPressed( Input.keys.UP ) and wall then
+    --     print( 'start climbing')
+    --     self.sm:setState( "climb", wall.h - mob.h / 2 )
+    -- end
 end
 
 -- JUMP STATE
@@ -123,11 +129,6 @@ Player.draw = function( self )
     -- Mobile.draw( mob )
     love.graphics.setColor( 1, 1, 1 )
     self.spr.dir = mob.dir
-    if mob.dx ~= 0 then
-        self.spr:play( 'walk' )
-    else
-        self.spr:play( 'idle' )
-    end
     self.spr:draw( mob.x, mob.y )
 
     local windowWidth = love.window.getMode()
