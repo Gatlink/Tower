@@ -11,6 +11,7 @@ require( 'Entities.Player' )
 local level = {}
 
 function love.load()
+    love.graphics.setBackgroundColor( 0.8, 0.8, 0.8 )
     Sprite.init()
 
     Player:load()

@@ -12,7 +12,7 @@ Sprite.init = function()
         if lfs.getInfo( dir .. '/' .. filename ).type == 'file' and ext == '.lua' then
             local noExt = filename:sub( 0, filename:find( ext ) - 1 )
             local sheet = require( dir .. '/' .. noExt )
-            sheet.image = love.graphics.newImage( noExt .. '.png' )
+            sheet.image = love.graphics.newImage( dir .. '/' .. noExt .. '.png' )
             sheet.quad  = love.graphics.newQuad( 0, 0, sheet.tileSize, sheet.tileSize, sheet.image:getDimensions() )
             Sprite.sheets[ noExt ] = sheet
         end
@@ -24,13 +24,16 @@ Sprite.new = function( sheet )
     new.sheet = Sprite.sheets[ sheet ]
     new.frame = 0
     new.dt    = 0
+    new.px    = 0.5
+    new.py    = 0.5
+    new.dir   = 1
 
     for _, v in pairs( new.sheet.anims ) do
         new.anim = v
         break
     end
 
-    setmetatable()
+    setmetatable( new, Sprite )
     return new
 end
 
@@ -47,5 +50,18 @@ Sprite.update = function( self, dt )
 end
 
 Sprite.draw = function( self, x, y )
-    self.sheet.quad:setViewport( )
+    local size = self.sheet.tileSize
+    local qx, qy, w, h, sw, sh = self.sheet.quad:getViewport()
+    qx = self.frame * size
+    qy = self.anim.offset * size
+    self.sheet.quad:setViewport( qx, qy, w, h, sw, sh );
+    love.graphics.draw( self.sheet.image, self.sheet.quad, x, y, 0, self.dir, 1, size * self.px, size * self.py )
+end
+
+Sprite.play = function( self, name )
+    if self.sheet.anims[ name ] or self.sheet.anims[ name ] == self.anim then return end
+
+    self.anim  = self.sheet.anims[ name ]
+    self.frame = 0
+    self.dt    = 0
 end

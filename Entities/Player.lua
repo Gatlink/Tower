@@ -97,7 +97,10 @@ end
 
 -- METHODS
 Player.load = function( self )
-    self.mob = Mobile.new( 100, 100 )
+    self.spr = Sprite.new( 'character' )
+    self.spr:play( 'idle' )
+
+    self.mob = Mobile.new( 100, 100, 32, 32 )
     self:setState( 'normal' )
 end
 
@@ -111,11 +114,21 @@ Player.update = function( self, dt )
     elseif mob.x < 0 then
         mob:setPosition( windowWidth + mob.x, mob.y )
     end
+
+    self.spr:update( dt )
 end
 
 Player.draw = function( self )
     local mob = self.mob
-    Mobile.draw( mob )
+    -- Mobile.draw( mob )
+    love.graphics.setColor( 1, 1, 1 )
+    self.spr.dir = mob.dir
+    if mob.dx ~= 0 then
+        self.spr:play( 'walk' )
+    else
+        self.spr:play( 'idle' )
+    end
+    self.spr:draw( mob.x, mob.y )
 
     local windowWidth = love.window.getMode()
     local radius = mob.w / 2
