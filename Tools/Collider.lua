@@ -2,8 +2,8 @@ Collider = {}
 Collider.__index = Collider
 Collider.new = function( x, y, w, h )
     local new = {}
-    new.w = w or 0
-    new.h = h or 0
+    new.w = math.floor( w ) or 0
+    new.h = math.floor( h ) or 0
 
     setmetatable( new, Collider )
     new:setPosition( x or 0, y or 0 )
@@ -20,7 +20,7 @@ Collider.collide = function( self, with )
             col.y = y
             col.depth = depth
         end
-        
+
         return true
     end
 
@@ -33,11 +33,22 @@ Collider.collide = function( self, with )
 end
 
 Collider.setPosition = function( self, x, y )
-    self.x = x
-    self.y = y
+    self:setX( x )
+    self:setY( y )
+end
 
-    self.left   = x - self.w / 2
-    self.right  = x + self.w / 2
-    self.top    = y - self.h / 2
-    self.bottom = y + self.h / 2
+Collider.setX = function( self, x )
+    self.x = math.floor( x )
+    local halfWid = math.floor( self.w / 2 )
+    self.left   = x - halfWid
+    self.right  = x + halfWid
+    self.w = self.right - self.left
+end
+
+Collider.setY = function( self, y )
+    self.y = math.floor( y )
+    local halfHei = math.floor( self.h / 2 )
+    self.top    = y - halfHei
+    self.bottom = y + halfHei
+    self.h = self.bottom - self.top
 end

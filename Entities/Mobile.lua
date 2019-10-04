@@ -6,13 +6,15 @@ Mobile.new = function( x, y, w, h, color )
 
     new.dir = 1
 
-    new.xSpeed = 200
+    new.xSpeed = 60
     new.xf = 0.95
     new.dx = 0
+    new.xr = 0
 
-    new.gravity = 500
+    new.gravity = 150
     new.yf = 0.98
     new.dy = 0
+    new.yr = 0
 
     new.collider   = Collider.new( new.x, new.y, new.w, new.h )
     new.collisions = {}
@@ -40,8 +42,27 @@ Mobile.draw = function( self )
 end
 
 Mobile.move = function( self, x, y )
-    self:setPosition( x, y )
+    -- self:setPosition( x, y )
+    self.xr    = self.xr + x - self.x
+    local dx   = math.floor( self.xr )
+    self.xr    = self.xr - dx
+    local sign = dx < 0 and -1 or 1
+    for i = 0, dx, sign do
+        self:setPosition( self.x + dx, self.y )
+        if self:checkCollisions() then break end
+    end
 
+    self.yr    = self.yr + y - self.y
+    local dy   = math.floor( self.yr )
+    self.yr    = self.yr - dy
+    local sign = dy < 0 and -1 or 1
+    for i = 0, dy, sign do
+        self:setPosition( self.x, self.y + dy )
+        if self:checkCollisions() then break end
+    end
+end
+
+Mobile.checkCollisions = function( self )
     local hasCollision
     repeat
         hasCollision = false
@@ -56,10 +77,13 @@ Mobile.move = function( self, x, y )
 
                     if collision.x ~= 0 then self.dx = 0 end
                     if collision.y ~= 0 then self.dy = 0 end
+                    return true
                 end
             end
         end
     until not hasCollision
+
+    return false
 end
 
 Mobile.setPosition = function( self, x, y )

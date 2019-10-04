@@ -10,18 +10,16 @@ StateNormal.update = function( self, dt )
 
     mob.dx = dx * mob.xf + mob.dx * ( 1 - mob.xf )
     Mobile.update( mob, dt )
-    
+
     if dx ~= 0 then
         self.sm.spr:play( 'walk' )
     else
         self.sm.spr:play( 'idle' )
     end
 
-    -- local wall = self.sm:collideWithWall()
-    -- if Input:isPressed( Input.keys.UP ) and wall then
-    --     print( 'start climbing')
-    --     self.sm:setState( "climb", wall.h - mob.h / 2 )
-    -- end
+    if Input:isPressed( Input.keys.UP ) then
+        self.sm:initJump()
+    end
 end
 
 -- JUMP STATE
