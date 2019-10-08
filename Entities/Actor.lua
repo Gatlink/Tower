@@ -45,6 +45,7 @@ Actor.moveX = function( self, dx )
 
         if correction ~= 0 then
             self:setX( self.x + correction )
+            self.xr = 0
             break
         else
             dx = dx - 1
@@ -75,6 +76,7 @@ Actor.moveY = function( self, dy )
 
         if correction ~= 0 then
             self:setY( self.y + correction )
+            self.yr = 0
             break
         else
             dy = dy - dir

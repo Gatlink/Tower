@@ -60,7 +60,7 @@ end
 Player.draw = function( self )
     love.graphics.setColor( 1, 1, 1 )
     self.spr.dir = dir
-    self.spr:draw( self.x, self.y )
+    self.spr:draw( self.x + self.xr, self.y + self.yr )
 
     -- local windowWidth = love.window.getMode()
 end
