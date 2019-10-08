@@ -1,11 +1,11 @@
 Actor = {}
 Actor.__index = Actor
-Actor.setmetatable( Actor, Collider )
+setmetatable( Actor, Collider )
 
 Actor.new = function( x, y, w, h, color )
     local new = Collider.new( x, y, w, h )
 
-    new.color = color
+    new.color = color or { 1, 0, 0 }
 
     new.xr = 0
     new.yr = 0
@@ -23,21 +23,23 @@ end
 
 Actor.moveX = function( self, dx )
     self.xr = self.xr + dx
-    dx = math.floor( dx )
+    dx = ( dx < 0 and math.ceil or math.floor )( self.xr )
 
-    if move == 0 then return end
+    if dx == 0 then return end
 
     self.xr = self.xr - dx
-    local dir = dx > 0 and 1 or -1
 
+    local dir = dx > 0 and 1 or -1
+    dx = math.abs( dx )
     while dx > 0 do
-        self.setX( self.x + dir )
+        self:setX( self.x + dir )
 
         local correction = 0
         for _, s in ipairs( Solid.all ) do
-            local col = self:collideWith( s )
+            local col = self:collide( s )
             if col ~= nil then
                 correction = col.x * col.depth
+                break
             end
         end
 
@@ -45,33 +47,34 @@ Actor.moveX = function( self, dx )
             self:setX( self.x + correction )
             break
         else
-            dx = dx - dir
+            dx = dx - 1
         end
     end
 end
 
 Actor.moveY = function( self, dy )
     self.yr = self.yr + dy
-    dy = math.floor( dy )
+    dy = math.floor( self.yr )
 
-    if move == 0 then return end
+    if dy == 0 then return end
 
     self.yr = self.yr - dy
     local dir = dy > 0 and 1 or -1
 
     while dy > 0 do
-        self.setX( self.y + dir )
+        self:setY( self.y + dir )
 
         local correction = 0
         for _, s in ipairs( Solid.all ) do
-            local col = self:collideWith( s )
+            local col = self:collide( s )
             if col ~= nil then
                 correction = col.y * col.depth
+                break
             end
         end
 
         if correction ~= 0 then
-            self:setX( self.y + correction )
+            self:setY( self.y + correction )
             break
         else
             dy = dy - dir

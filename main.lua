@@ -4,8 +4,12 @@ require( 'Tools.Input' )
 require( 'Tools.StateMachine' )
 require( 'Tools.Sprite' )
 
-require( 'Entities.Entity' )
-require( 'Entities.Mobile' )
+-- require( 'Entities.Entity' )
+-- require( 'Entities.Mobile' )
+-- require( 'Entities.Player' )
+
+require( 'Entities.Solid' )
+require( 'Entities.Actor' )
 require( 'Entities.Player' )
 
 local level = {}
@@ -15,8 +19,8 @@ function love.load()
     Sprite.init()
 
     Player:load()
-    level[ #level + 1 ] = Entity.new( 400, 550, 800, 300, { 0.3, 0.3, 0.3 } )
-    level[ #level + 1 ] = Entity.new( 370, 200, 60, 400, { 0.3, 0.3, 0.3 } )
+    level[ #level + 1 ] = Solid.new( 400, 550, 800, 300 )
+    level[ #level + 1 ] = Solid.new( 370, 200,  60, 400 )
 end
 
 function love.update( dt )
