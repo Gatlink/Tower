@@ -4,6 +4,22 @@ Tween.lerp   = function( from, to, t, easing )
     return from + ( to - from ) * math.max( 0, math.min( 1, easing and Tween[ easing ] and Tween[ easing ]( t ) or t ) )
 end
 
+Tween.squareIn = function( t ) return t * t end
+
+Tween.squareInOut = function( t )
+    if t <= .5 then
+        return t * t * 4
+    else
+        t = t - 1
+        return 1 + t * t * 4
+    end
+end
+
+Tween.squareOut = function( t )
+    t = t - 1
+    return 1 + t * t
+end
+
 Tween.cubeIn = function( t ) return t * t * t end
 
 Tween.cubeInOut = function( t )
