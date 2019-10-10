@@ -71,5 +71,10 @@ Player.draw = function( self )
     self.spr.dir = dir
     self.spr:draw( self.x + self.xr, self.y + self.yr )
 
-    -- local windowWidth = love.window.getMode()
+    local windowWidth = love.window.getMode()
+    if self.right > windowWidth then
+        self.spr:draw( self.x - windowWidth + self.xr, self.y + self.yr )
+    elseif self.left < 0 then
+        self.spr:draw( windowWidth + self.x + self.xr, self.y + self.yr )
+    end
 end
