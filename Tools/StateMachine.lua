@@ -31,7 +31,7 @@ StateMachine.draw = function( self )
 end
 
 StateMachine.setState = function( self, stateId, data )
-    if not self.states[ stateId ] then return nil end
+    if not self.states[ stateId ] or stateId == self.current then return nil end
 
     local state = self:getCurrentState()
     if state and state.exit then

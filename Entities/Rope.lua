@@ -9,6 +9,7 @@ Rope.new = function( x, y, length )
 
     new.length        = length
     new.currentLength = length
+    new.retractSpd    = 50
 
     setmetatable( new, Rope )
     return new
@@ -26,15 +27,19 @@ end
 Rope.checkLength = function( self, x, y, vx, vy )
     local rx, ry = self:vectorTo( x + vx, y + vy )
 
-    rx, ry = Vector.normalize( rx, ry )
-    rx, ry = rx * self.currentLength, ry * self.currentLength
-    vx, vy = rx - x, ry - y
+    if Vector.sqrLen( rx, ry ) > self.currentLength * self.currentLength then
+        rx, ry = Vector.normalize( rx, ry )
+        rx, ry = rx * self.currentLength, ry * self.currentLength
+        rx, ry = Vector.add( self.x, self.y, rx, ry )
+        vx, vy = Vector.sub( rx, ry, x, y )
+    end
 
     return vx, vy
 end
 
 Rope.update = function( self, dt )
-    local len = self.currentLength - self.length
-    local t   = len / self.length
-    self.currentLength = t * self.currentLength + ( 1 - t ) * self.length
+    if self.currentLength > self.length then
+        local dl = dt * self.retractSpd
+        self.currentLength = math.max( self.currentLength - dl, self.length )
+    end
 end

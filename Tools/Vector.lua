@@ -8,6 +8,10 @@ Vector.sqrLen = function( x, y )
     return x * x + y * y
 end
 
+Vector.add = function( ax, ay, bx, by )
+    return ax + bx, ay + by
+end
+
 Vector.sub = function( ax, ay, bx, by )
     return ax - bx, ay - by
 end

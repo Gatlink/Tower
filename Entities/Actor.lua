@@ -58,13 +58,14 @@ end
 -- return true if there was no collision
 Actor.moveY = function( self, dy )
     self.yr = self.yr + dy
-    dy = math.floor( self.yr )
+    dy = ( dy < 0 and math.ceil or math.floor )( self.yr )
 
     if dy == 0 then return true end
 
     self.yr = self.yr - dy
-    local dir = dy > 0 and 1 or -1
 
+    local dir = dy > 0 and 1 or -1
+    dy = math.abs( dy )
     while dy > 0 do
         self:setY( self.y + dir )
 
@@ -82,7 +83,7 @@ Actor.moveY = function( self, dy )
             self.yr = 0
             return false
         else
-            dy = dy - dir
+            dy = dy - 1
         end
     end
 

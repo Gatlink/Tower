@@ -1,4 +1,4 @@
-Player = Actor.new( 100, 200, 32, 32 )
+Player = Actor.new( 100, 400, 32, 32 )
 setmetatable( Player, Actor )
 
 local dir    = 1
@@ -65,9 +65,9 @@ normalState.update = function( self, dt )
         Player.spr:play( 'idle' )
     end
 
-    -- if Input:isPressed( Input.keys.UP ) then
-    --     sm:setState( 'airborne', -600 )
-    -- end
+    if Input:isPressed( Input.keys.UP ) then
+        sm:setState( 'airborne', -400 )
+    end
 end
 
 
@@ -78,6 +78,8 @@ local airborneState = State.new( sm, "airborne" )
 local vx = 0
 local vy = 0
 local ay = 600
+
+local suspendGravity = 0
 
 local rope = nil
 
@@ -90,12 +92,12 @@ end
 airborneState.update = function( self, dt )
     vy = vy + ay * dt
 
-    local dx, dy = vx * dt, vy * dt
     if rope ~= nil then
-        rope:update( dt )
-        dx, dy = rope:checkLength( Player.x, Player.y, dx, dy )
+        -- rope:update( dt )
+        vx, vy = rope:checkLength( Player.x, Player.y, vx, vy )
     end
 
+    local dx, dy = vx * dt, vy * dt
     if not Player:moveX( dx ) then vx = 0 end
     if not Player:moveY( dy ) then
         sm:setState( 'grounded' )
@@ -108,7 +110,7 @@ airborneState.exit = function( self )
     rope = nil
 end
 
-sm:setState( 'airborne' )
+sm:setState( 'grounded' )
 
 -- CALLBACKS
 Player.load = function( self )
@@ -129,9 +131,9 @@ Player.update = function( self, dt )
     self.spr:update( dt )
 
     if Input.cursor and Input.cursor.clicked then
-        rope = Rope.new( Input.cursor.x, Input.cursor.y, 50 )
-        rope:attach( self.x, self.y )
-        sm:setState( "airbrone" )
+        rope = Rope.new( Input.cursor.x, Input.cursor.y, 100 )
+        -- rope:attach( self.x, self.y )
+        sm:setState( "airborne" )
     end
 end
 
