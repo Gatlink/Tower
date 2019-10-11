@@ -63,3 +63,7 @@ State.new = function( sm, id )
     setmetatable( new, State )
     return new
 end
+
+State.update = function( self, dt ) end
+State.enter  = function( self, data ) end
+State.exit   = function( self, data ) end

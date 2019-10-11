@@ -25,7 +25,7 @@ Actor.moveX = function( self, dx )
     self.xr = self.xr + dx
     dx = ( dx < 0 and math.ceil or math.floor )( self.xr )
 
-    if dx == 0 then return end
+    if dx == 0 then return true end
 
     self.xr = self.xr - dx
 
@@ -46,18 +46,21 @@ Actor.moveX = function( self, dx )
         if correction ~= 0 then
             self:setX( self.x + correction )
             self.xr = 0
-            break
+            return false
         else
             dx = dx - 1
         end
     end
+
+    return true
 end
 
+-- return true if there was no collision
 Actor.moveY = function( self, dy )
     self.yr = self.yr + dy
     dy = math.floor( self.yr )
 
-    if dy == 0 then return end
+    if dy == 0 then return true end
 
     self.yr = self.yr - dy
     local dir = dy > 0 and 1 or -1
@@ -77,9 +80,11 @@ Actor.moveY = function( self, dy )
         if correction ~= 0 then
             self:setY( self.y + correction )
             self.yr = 0
-            break
+            return false
         else
             dy = dy - dir
         end
     end
+
+    return true
 end

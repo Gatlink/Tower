@@ -6,12 +6,21 @@ Input = {
     },
 
     held     = {},
-    released = {}
+    released = {},
+
+    cursor = nil
 }
 
 Input.update = function( self, dt )
     for k, v in pairs( self.held )     do self.held[ k ] = v + dt end
     for k, _ in pairs( self.released ) do self.released[ k ] = nil end
+
+    local wasDown = self.cursor ~= nil
+    if love.mouse.isDown( 1 ) then
+        self.cursor = { x = love.mouse.getX(), y = love.mouse.getY(), clicked = not wasDown }
+    else
+        self.cursor = nil
+    end
 end
 
 Input.keypressed = function ( self, code )

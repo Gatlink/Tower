@@ -3,11 +3,9 @@ require( 'Tools.Collider' )
 require( 'Tools.Input' )
 require( 'Tools.StateMachine' )
 require( 'Tools.Sprite' )
+require( 'Tools.Vector' )
 
--- require( 'Entities.Entity' )
--- require( 'Entities.Mobile' )
--- require( 'Entities.Player' )
-
+require( 'Entities.Rope' )
 require( 'Entities.Solid' )
 require( 'Entities.Actor' )
 require( 'Entities.Player' )
