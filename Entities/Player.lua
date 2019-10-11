@@ -67,7 +67,7 @@ normalState.update = function( self, dt )
 
     if Input:isPressed( Input.keys.UP ) then
         sm:setState( 'airborne', -400 )
-    end
+end
 end
 
 
@@ -78,8 +78,6 @@ local airborneState = State.new( sm, "airborne" )
 local vx = 0
 local vy = 0
 local ay = 600
-
-local suspendGravity = 0
 
 local rope = nil
 
