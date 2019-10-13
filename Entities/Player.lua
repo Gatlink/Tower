@@ -97,15 +97,16 @@ airborneState.update = function( self, dt )
     if rope ~= nil then
         local rx, ry = rope:vectorTo( x, y )
         local length = rope.currentLength
-        if Vector.sqrLen( rx, ry ) > length * length then
-            rx, ry = Vector.normalize( rx, ry )
+        local len = Vector.len( rx, ry )
+        if len > length then
+            rx, ry = rx / len, ry / len
             x, y = rope.x + rx * length, rope.y + ry * length
         end
     end
 
     dx, dy = x - oldX, y - oldY
     if not Player:moveX( dx ) then vx = 0 end
-    if not Player:moveY( dy ) and dy > 0 then
+    if not Player:moveY( dy ) and dy > 0 and rope == nil then
         sm:setState( 'grounded' )
         return
     end

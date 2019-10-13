@@ -20,3 +20,7 @@ Vector.normalize = function( x, y )
     local len = Vector.len( x, y )
     return x / len, y / len
 end
+
+Vector.dot = function( ax, ay, bx, by )
+    return ax * bx + ay * by
+end
