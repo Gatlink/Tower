@@ -9,7 +9,10 @@ Rope.new = function( x, y, length )
 
     new.length        = length
     new.currentLength = length
-    new.retractSpd    = 50
+
+    new.springAcceleration = 800
+    new.springVelocity     = 0
+    new.lengthLimit        = 2 * length
 
     setmetatable( new, Rope )
     return new
@@ -24,22 +27,11 @@ Rope.attach = function( self, x, y )
     self.currentLength = Vector.len( rx, ry )
 end
 
-Rope.checkLength = function( self, x, y, vx, vy )
-    local rx, ry = self:vectorTo( x + vx, y + vy )
-
-    if Vector.sqrLen( rx, ry ) > self.currentLength * self.currentLength then
-        rx, ry = Vector.normalize( rx, ry )
-        rx, ry = rx * self.currentLength, ry * self.currentLength
-        rx, ry = Vector.add( self.x, self.y, rx, ry )
-        vx, vy = Vector.sub( rx, ry, x, y )
-    end
-
-    return vx, vy
-end
-
 Rope.update = function( self, dt )
+    -- ROPE ELASTICITY
     if self.currentLength > self.length then
-        local dl = dt * self.retractSpd
-        self.currentLength = math.max( self.currentLength - dl, self.length )
+        local t = Tween.cubeOut( math.min( ( self.currentLength - self.length ) /  ( self.lengthLimit - self.length ), 1 ) )
+        self.springVelocity = self.springVelocity - self.springAcceleration * t * dt
+        self.currentLength = self.currentLength + self.springVelocity * dt
     end
 end

@@ -89,3 +89,7 @@ Actor.moveY = function( self, dy )
 
     return true
 end
+
+Actor.getRealPos = function( self )
+    return self.x + self.xr, self.y + self.yr
+end

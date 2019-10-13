@@ -17,13 +17,14 @@ function love.load()
     Sprite.init()
 
     Player:load()
-    level[ #level + 1 ] = Solid.new( 400, 550, 800, 300 )
-    level[ #level + 1 ] = Solid.new( 370, 200,  60, 400 )
+    level[ #level + 1 ] = Solid.new( 400, 600, 800, 100 )
+    level[ #level + 1 ] = Solid.new( 785, 300, 30, 600 )
+    level[ #level + 1 ] = Solid.new(  15, 300, 30, 600 )
 end
 
 function love.update( dt )
     Player:update( dt )
-    Input:update( dt ) -- needs to be last
+    Input.update( dt ) -- needs to be last
 end
 
 function love.draw()
@@ -33,6 +34,3 @@ function love.draw()
 
     Player:draw()
 end
-
-function love.keypressed( _, code )  Input:keypressed( code ) end
-function love.keyreleased( _, code ) Input:keyreleased( code ) end

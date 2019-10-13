@@ -1,4 +1,4 @@
-Player = Actor.new( 100, 400, 32, 32 )
+Player = Actor.new( 100, 200, 32, 32 )
 setmetatable( Player, Actor )
 
 local dir    = 1
@@ -90,16 +90,30 @@ end
 airborneState.update = function( self, dt )
     vy = vy + ay * dt
 
+    local dx, dy = vx * dt, vy * dt
+    local oldX, oldY = Player:getRealPos()
+    local x, y = oldX + dx, oldY + dy
+
     if rope ~= nil then
-        -- rope:update( dt )
-        vx, vy = rope:checkLength( Player.x, Player.y, vx, vy )
+        local rx, ry = rope:vectorTo( x, y )
+        local length = rope.currentLength
+        if Vector.sqrLen( rx, ry ) > length * length then
+            rx, ry = Vector.normalize( rx, ry )
+            x, y = rope.x + rx * length, rope.y + ry * length
+        end
     end
 
-    local dx, dy = vx * dt, vy * dt
+    dx, dy = x - oldX, y - oldY
     if not Player:moveX( dx ) then vx = 0 end
-    if not Player:moveY( dy ) then
+    if not Player:moveY( dy ) and dy > 0 then
         sm:setState( 'grounded' )
+        return
     end
+
+    x, y = Player:getRealPos()
+    vx = ( x - oldX ) / dt
+    vy = ( y - oldY ) / dt
+
 end
 
 airborneState.exit = function( self )
@@ -108,7 +122,7 @@ airborneState.exit = function( self )
     rope = nil
 end
 
-sm:setState( 'grounded' )
+sm:setState( 'airborne' )
 
 -- CALLBACKS
 Player.load = function( self )
@@ -117,35 +131,25 @@ Player.load = function( self )
 end
 
 Player.update = function( self, dt )
-    sm:update( dt )
+    if rope ~= nil then rope:update( dt ) end
 
-    local windowWidth = love.window.getMode()
-    if self.x > windowWidth then
-        self:setPosition( self.x - windowWidth, self.y )
-    elseif self.x < 0 then
-        self:setPosition( windowWidth + self.x, self.y )
-    end
+    sm:update( dt )
 
     self.spr:update( dt )
 
-    if Input.cursor and Input.cursor.clicked then
-        rope = Rope.new( Input.cursor.x, Input.cursor.y, 100 )
-        -- rope:attach( self.x, self.y )
+    if Input.leftClick() then
+        rope = Rope.new( Input.getMouseX(), Input.getMouseY(), 150 )
+        rope:attach( self.x, self.y )
         sm:setState( "airborne" )
+    elseif Input.rightClick() then
+        rope = nil
     end
 end
 
 Player.draw = function( self )
     love.graphics.setColor( 1, 1, 1 )
     self.spr.dir = dir
-    self.spr:draw( self.x + self.xr, self.y + self.yr )
-
-    local windowWidth = love.window.getMode()
-    if self.right > windowWidth then
-        self.spr:draw( self.x - windowWidth + self.xr, self.y + self.yr )
-    elseif self.left < 0 then
-        self.spr:draw( windowWidth + self.x + self.xr, self.y + self.yr )
-    end
+    self.spr:draw( self.x, self.y )
 
     if rope then
         love.graphics.setColor( 0.8, 0, 0 )
