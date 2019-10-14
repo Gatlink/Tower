@@ -27,8 +27,8 @@ end
 normalState.update = function( self, dt )
     -- MOVE X
     local xdt = 0;
-    local inputLeft  = Input:isHeldDown( Input.keys.LEFT )
-    local inputRight = Input:isHeldDown( Input.keys.RIGHT )
+    local inputLeft  = Input.isHeldDown( Input.keys.LEFT )
+    local inputRight = Input.isHeldDown( Input.keys.RIGHT )
     -- Take the most recent input
     if inputLeft and ( not inputRight or inputLeft < inputRight ) then
         xdt = inputLeft
@@ -65,7 +65,7 @@ normalState.update = function( self, dt )
         Player.spr:play( 'idle' )
     end
 
-    if Input:isPressed( Input.keys.UP ) then
+    if Input.isPressed( Input.keys.UP ) then
         sm:setState( 'airborne', -400 )
 end
 end

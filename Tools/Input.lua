@@ -16,11 +16,11 @@ local cursor = {
 }
 
 -- LOVE CALLBACKS
-love.keypressed = function ( code )
+love.keypressed = function ( _, code )
     held[ code ] = 0
 end
 
-love.keyreleased = function( code )
+love.keyreleased = function( _, code )
     if held[ code ] then
         held[ code ] = nil
     end

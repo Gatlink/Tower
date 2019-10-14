@@ -36,12 +36,14 @@ StateMachine.setState = function( self, stateId, data )
     local state = self:getCurrentState()
     if state and state.exit then
         state:exit()
+        -- print( 'exit state ' .. self.current )
     end
 
     self.current = stateId
     state = self:getCurrentState()
     if state.enter then
         state:enter( data )
+        -- print( 'enter state ' .. self.current )
     end
 end
 

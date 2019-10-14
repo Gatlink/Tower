@@ -20,6 +20,7 @@ function love.load()
     level[ #level + 1 ] = Solid.new( 400, 600, 800, 100 )
     level[ #level + 1 ] = Solid.new( 785, 300, 30, 600 )
     level[ #level + 1 ] = Solid.new(  15, 300, 30, 600 )
+    level[ #level + 1 ] = Solid.new( 128, 300, 256, 32 )
 end
 
 function love.update( dt )
