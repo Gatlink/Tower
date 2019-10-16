@@ -56,13 +56,13 @@ normalState.update = function( self, dt )
     local moved = Player:moveX( dir * xSpeed * dt )
     if Player:moveY( 1 ) then
         sm:setState( 'airborne' )
-    end
-
-    Player.spr.spdRatio = 1
-    if xdt ~= 0 and moved then
-        Player.spr:play( 'walk' )
     else
-        Player.spr:play( 'idle' )
+        Player.spr.spdRatio = 1
+        if xdt ~= 0 and moved then
+            Player.spr:play( 'walk' )
+        else
+            Player.spr:play( 'idle' )
+        end
     end
 
     if Input.isPressed( Input.keys.UP ) then
@@ -84,6 +84,10 @@ local rope = nil
 airborneState.enter = function( self, ySpd )
     if ySpd then
         vy = ySpd
+    end
+
+    if Player.spr then
+        Player.spr:play( "idle" )
     end
 end
 
