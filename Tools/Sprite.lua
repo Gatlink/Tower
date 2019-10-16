@@ -4,7 +4,6 @@ Sprite.__index = Sprite
 Sprite.sheets = {}
 
 Sprite.init = function()
-    print( 'load sheets' )
     local lfs = love.filesystem
     local dir = 'Resources/SpriteSheets'
     for _, filename in ipairs( lfs.getDirectoryItems( dir ) ) do

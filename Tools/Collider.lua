@@ -36,7 +36,8 @@ Collider.lineCollide = function( self, x1, y1, x2, y2 )
     local lineline = function( px1, py1, px2, py2, qx1, qy1, qx2, qy2 )
         local uA = ( ( qx2 - qx1 ) * ( py1 - qy1 ) - ( qy2 - qy1 ) * ( px1 - qx1 ) ) / ( ( qy2 - qy1 ) * ( px2 - px1 ) - ( qx2 - qx1 ) * ( py2 - py1 ) );
         local uB = ( ( px2 - px1 ) * ( py1 - qy1 ) - ( py2 - py1 ) * ( px1 - qx1 ) ) / ( ( qy2 - qy1 ) * ( px2 - px1 ) - ( qx2 - qx1 ) * ( py2 - py1 ) );
-        if uA >= 0 and uA <= 1 and uB >= 0 and uB <= 1 then
+        -- ignore extrimities shared by the lines
+        if uA > 0 and uA < 1 and uB > 0 and uB < 1 then
             return px1 + uA * ( px2 - px1 ), py1 + uA * ( py2 - py1 )
         end
 
@@ -49,10 +50,10 @@ Collider.lineCollide = function( self, x1, y1, x2, y2 )
     local bx, by = lineline( x1, y1, x2, y2, self.left, self.bottom, self.right, self.bottom )
 
     local points = {}
-    if lx then points[ # points ] = { x = lx, y = ly, dist = Vector.sqrLen( lx - x1, ly - y1 ) } end
-    if rx then points[ # points ] = { x = rx, y = ry, dist = Vector.sqrLen( rx - x1, ry - y1 ) } end
-    if tx then points[ # points ] = { x = tx, y = ty, dist = Vector.sqrLen( tx - x1, ty - y1 ) } end
-    if bx then points[ # points ] = { x = bx, y = by, dist = Vector.sqrLen( bx - x1, by - y1 ) } end
+    if lx then points[ # points + 1 ] = { x = lx, y = ly, dist = Vector.sqrLen( lx - x1, ly - y1 ) } end
+    if rx then points[ # points + 1 ] = { x = rx, y = ry, dist = Vector.sqrLen( rx - x1, ry - y1 ) } end
+    if tx then points[ # points + 1 ] = { x = tx, y = ty, dist = Vector.sqrLen( tx - x1, ty - y1 ) } end
+    if bx then points[ # points + 1 ] = { x = bx, y = by, dist = Vector.sqrLen( bx - x1, by - y1 ) } end
 
     local closest = nil
     for _, p in ipairs( points ) do

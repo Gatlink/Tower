@@ -104,7 +104,7 @@ airborneState.update = function( self, dt )
         local len = Vector.len( rx, ry )
         if len > length then
             rx, ry = rx / len, ry / len
-            x, y = rope.x + rx * length, rope.y + ry * length
+            x, y = rope:getX() + rx * length, rope:getY() + ry * length
         end
     end
 
