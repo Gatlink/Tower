@@ -144,7 +144,7 @@ Player.update = function( self, dt )
 
     if Input.leftClick() then
         rope = Rope.new( Input.getMouseX(), Input.getMouseY(), 150 )
-        rope:attach( self.x, self.y )
+        rope:attach( self )
         sm:setState( "airborne" )
     elseif Input.rightClick() then
         rope = nil
@@ -157,8 +157,6 @@ Player.draw = function( self )
     self.spr:draw( self.x, self.y )
 
     if rope then
-        love.graphics.setColor( 0.8, 0, 0 )
-        love.graphics.line( rope.x, rope.y, self.x, self.y )
-        love.graphics.circle( 'fill', rope.x, rope.y, 5 )
+        rope:draw( Player )
     end
 end
