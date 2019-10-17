@@ -40,9 +40,21 @@ Rope.attach = function( self, actor )
 end
 
 Rope.update = function( self, dt )
+    -- UNSTICK
+    if #self.points > 0 and self.actor then
+        local last = self.points[ #self.points ]
+        local prev = #self.points > 1 and self.points[ #self.points - 1 ] or { x = self.x, y = self.y }
+        if not last.solid:lineCollide( prev.x, prev.y, self.actor.x, self.actor.y ) then
+            self.currentLength = self.currentLength + last.len
+            self.length        = self.length + last.len
+            self.lengthLimit   = self.lengthLimit + last.len
+            table.remove( self.points, #self.points )
+        end
+    end
+
     -- COLLISIONS
     repeat until not self:checkCollisions()
-    
+
     -- ROPE ELASTICITY
     if self.currentLength > self.length then
         local t = Tween.cubeOut( math.min( ( self.currentLength - self.length ) /  ( self.lengthLimit - self.length ), 1 ) )
@@ -55,13 +67,14 @@ Rope.checkCollisions = function( self )
     for _, s in ipairs( Solid.all ) do
         local x, y, _ = s:lineCollide( self:getX(), self:getY(), self.actor.x, self.actor.y )
         if x then
-            local prev = #self.points > 0 and self.points[ #self.points ] or { x = x, y = y }
+            local prev = #self.points > 0 and self.points[ #self.points ] or { x = self.x, y = self.y }
             local px   = x - s.left < s.right - x and s.left or s.right
             local py   = y - s.top < s.bottom - y and s.top or s.bottom
             local len  = Vector.len( px - prev.x, py - prev.y )
-            self.points[ #self.points + 1 ] = { x = px, y = py, len = len }
+            self.points[ #self.points + 1 ] = { x = px, y = py, len = len, solid = s }
             self.currentLength = self.currentLength - len
             self.length        = self.length - len
+            self.lengthLimit   = self.lengthLimit - len
             return true
         end
     end
