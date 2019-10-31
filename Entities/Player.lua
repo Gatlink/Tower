@@ -1,4 +1,4 @@
-Player = Actor.new( 100, 200, 32, 32 )
+Player = Actor.new( 100, 200, 32, 60 )
 setmetatable( Player, Actor )
 
 local dir    = 1

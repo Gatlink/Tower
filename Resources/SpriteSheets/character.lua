@@ -1,5 +1,5 @@
 return {
-    tileSize = 32,
+    tileSize = 64,
     anims = {
         idle = {
             speed  = 0,
@@ -8,7 +8,7 @@ return {
         },
         walk = {
             speed  = 0.1,
-            count  = 6,
+            count  = 12,
             offset = 0
         }
     }
