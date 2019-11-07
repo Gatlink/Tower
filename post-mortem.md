@@ -1,6 +1,6 @@
 # Devtober, a post mortem
 
-*Devtober* finished 5 days ago, and now is the time to look back on this whole month of coding.
+*Devtober* finished a week ago, and now is the time to look back on this whole month of coding.
 You can read my original post [here](http://www.blog.tronica.io/climbing-the-tower).
 
 ## What happenned
@@ -22,4 +22,4 @@ So why how did it happen? Why is there so few items checked on this list?
 
 ### Time
 
-
+My schedule only allowed me to work between half an hour to an hour a day during the week, and a bit more during the weekend. But we all know weekend were not made to work. In that time, it was hard to put together
